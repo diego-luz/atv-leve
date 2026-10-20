@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "atv-leve"
+version = "0.1.0"
+description = "Deixa TVs Android TV / Google TV com poucos recursos mais leves, via ADB, sem root."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+dependencies = ["pyyaml>=6", "rich>=13"]
+
+[project.optional-dependencies]
+web = ["flask>=3"]
+dev = ["pytest>=7", "ruff>=0.4", "flask>=3"]
+
+[project.scripts]
+atvleve = "atvleve.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"atvleve.web" = ["templates/*.html", "static/*.css", "static/*.js"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["atvleve", "fake_tv", "helpers"]

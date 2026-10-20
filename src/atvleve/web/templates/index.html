@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% from "_ui.html" import icon, intro with context %}
+{% block main %}
+<section class="hero">
+  <div class="orb o1" aria-hidden="true"></div><div class="orb o2" aria-hidden="true"></div>
+  <span class="hero-label">{{ icon("tv") }}TV Android mais leve</span>
+  <h1 class="display">Sua TV,<br><span class="grad">mais leve.</span></h1>
+  <p class="lead">Informe o IP e a porta de depuração. O ATV Leve lê memória, armazenamento e apps e mostra o que vale a pena ajustar. Nada muda sem você confirmar.</p>
+
+  <div class="connect ring strong">
+    <div class="glass">
+      <form method="post" action="{{ url_for('analyze') }}" data-loading="Analisando a TV"><input type="hidden" name="csrf" value="{{ csrf }}">
+        <div class="field">
+          <label for="ip">IP da TV</label>
+          <input id="ip" name="ip" value="{{ form.ip }}" placeholder="192.168.0.20" inputmode="decimal" autocomplete="off" required autofocus>
+        </div>
+        <div class="field">
+          <label for="port">Porta</label>
+          <input id="port" name="port" value="{{ form.port }}" placeholder="5555" inputmode="numeric" autocomplete="off">
+        </div>
+        <button class="btn-primary" type="submit"><span>Analisar{{ icon("arrow") }}</span></button>
+      </form>
+    </div>
+  </div>
+  <p class="hint">Porta padrão 5555. Na "Depuração sem fio" do Google TV, use a porta mostrada na tela.</p>
+
+  {% if error %}<div class="notice error" role="alert"><strong>Não deu certo.</strong><p>{{ error }}</p></div>{% endif %}
+  {% if notice %}<div class="notice ok"><strong>Pronto.</strong><p>{{ notice }}</p></div>{% endif %}
+</section>
+
+<section class="section">
+  {{ intro("Antes de começar", "Uma vez só,<br>na própria TV.", "Três passos para o computador conseguir conversar com a TV pela rede. Nenhum deles altera nada nela.") }}
+  <div class="grid grid-3">
+    <div class="ring reveal"><article class="glass card lift">
+      <div class="card-top"><span class="icon-chip">{{ icon("shield") }}</span><span class="step">01</span></div>
+      <h3 class="h4">Ative a depuração</h3>
+      <ol>
+        <li>Configurações → Sistema → Sobre.</li>
+        <li>OK 7 vezes em <b>Build do Android TV OS</b>.</li>
+        <li>Opções do desenvolvedor → <b>Depuração USB</b> e <b>Depuração pela rede</b>.</li>
+        <li>IP em Rede e Internet → sua rede.</li>
+      </ol>
+    </article></div>
+    <div class="ring reveal"><article class="glass card lift">
+      <div class="card-top"><span class="icon-chip teal">{{ icon("link") }}</span><span class="step teal">02</span></div>
+      <h3 class="h4">Só tem "Depuração sem fio"?</h3>
+      <p>Na TV: Depuração sem fio → <b>Parear com código</b>. Digite o IP:porta e o código dessa tela.</p>
+      <form class="pair" method="post" action="{{ url_for('pair') }}" data-loading="Pareando com a TV"><input type="hidden" name="csrf" value="{{ csrf }}">
+        <input class="input" name="pair_host" placeholder="192.168.0.20:37123" aria-label="IP e porta de pareamento" required>
+        <input class="input" name="code" placeholder="Código de 6 dígitos" inputmode="numeric" aria-label="Código de pareamento" required>
+        <input type="hidden" name="ip" value="{{ form.ip }}">
+        <button class="btn-soft" type="submit">Parear</button>
+      </form>
+    </article></div>
+    <div class="ring reveal"><article class="glass card lift">
+      <div class="card-top"><span class="icon-chip emerald">{{ icon("check") }}</span><span class="step emerald">03</span></div>
+      <h3 class="h4">Aceite na tela da TV</h3>
+      <p>Na primeira análise a TV pergunta <b>"Permitir depuração?"</b>. Marque <b>Sempre permitir</b> e confirme.</p>
+      <p class="muted small">Leva até 1 minuto. Nada é alterado.</p>
+    </article></div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,2 @@
+Filesystem      1K-blocks    Used Available Use% Mounted on
+/dev/block/dm-8   4579328 3712044    867284  82% /data

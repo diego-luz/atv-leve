@@ -1,0 +1,6 @@
+brand: Other
+model: X
+match:
+  ro.product.model: [SOMETHING-ELSE]
+safe_to_disable: []
+confirm_first: []

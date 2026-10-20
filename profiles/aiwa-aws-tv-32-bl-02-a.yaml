@@ -1,0 +1,61 @@
+brand: Aiwa
+model: AWS-TV-32-BL-02-A
+# ro.product.model é só "SMART TV" (genérico); o produto e a placa identificam o modelo.
+match:
+  ro.product.name: [KTC_AIWA_2K_SA_21V2]
+  ro.product.board: [stanford]
+android_release: "14"
+protected:                   # nunca tocar (somam-se às regras de _generic.yaml)
+  - com.ktc.*                # pacotes do fabricante (KTC)
+  - ktc.*
+confirm_first:               # vistos no scan real (2026-10-20); pedir confirmação
+  - tv.anoki.acr.anokiacroptin
+  - fusion.android.tv.demo
+  - com.cltv.fast
+  - com.google.android.tvrecommendations
+  - com.google.android.katniss
+  - com.google.android.apps.mediashell
+  - com.google.android.backdrop
+  - com.android.dreams.basic
+  - com.google.android.play.games
+  - com.google.android.feedback
+  - com.google.android.syncadapters.calendar
+  - com.amazon.amazonvideo.livingroom
+  - com.google.android.partnersetup
+  - android.autoinstalls.config.ktc.pai
+  - com.android.adservices.api
+safe_to_disable: []          # vazio até ser testado nesta TV (desativar, reiniciar, usar)
+descriptions:
+  tv.anoki.acr.anokiacroptin: "ACR: reconhece o que passa na tela para publicidade (rastreamento)."
+  fusion.android.tv.demo: "Modo demonstração de loja. Não serve em casa."
+  com.cltv.fast: "Canais FAST pré-instalados (TV grátis com anúncios)."
+  com.google.android.tvrecommendations: "Recomendações na tela inicial. A tela fica mais simples."
+  com.google.android.katniss: "Busca por voz e Assistente. O botão do microfone do controle para de funcionar."
+  com.google.android.apps.mediashell: "Chromecast integrado. Deixa de receber transmissão do celular."
+  com.google.android.backdrop: "Protetor de tela \"Ambiente\" (fotos)."
+  com.android.dreams.basic: "Protetor de tela básico."
+  com.google.android.play.games: "Google Play Games."
+  com.google.android.feedback: "Envio de relatórios de erro para o Google."
+  com.google.android.syncadapters.calendar: "Sincronização de agenda. Ninguém usa agenda na TV."
+  com.amazon.amazonvideo.livingroom: "Prime Video pré-instalado. Mantenha se você assina."
+  com.google.android.partnersetup: "Instala apps de parceiros automaticamente."
+  android.autoinstalls.config.ktc.pai: "Lista de apps que a fabricante instala sozinha."
+  com.android.adservices.api: "API de anúncios personalizados do Android."
+# Referência cruzada: github.com/Gathin23/cleanyourtv (examples/aiwa-ai-pont-sa e
+# examples/chiq-gtvu65, mesmo chip MT5867 e firmware UKNV) testou ACR, partnersetup,
+# feedback, play.games, agenda, katniss, mediashell e adservices nessas TVs.
+# partnercustomizer NÃO: numa CHiQ Android 11 fez com.mediatek.tv.service entrar em loop.
+notes: >
+  Aiwa 32" (KTC), MediaTek MT5867, placa "stanford", Android TV 14 (launcher
+  com.google.android.tvlauncher), build UKNV.260602.001, 913 MB de RAM, modo
+  pouca RAM ativo. Scan real em 2026-10-20: 148 pacotes. Depuração pela rede na
+  porta 5555 funciona sem pareamento. Botão Input do controle (receptor "MStar
+  Smart TV IR Receiver"): KEY_KP1 / scan 79 → KEYCODE_TV_INPUT, atendido por
+  com.mediatek.wwtv.tvcenter (InputsPanelActivity), não pela tela inicial; o
+  --input-key do launcher não deve ser necessário (a confirmar depois da troca).
+  Troca de tela inicial validada em 2026-10-20 (`atvleve launcher --set
+  com.gathin.tvhome`): tvlauncher declara prioridade HOME 2, então o padrão só
+  vale depois de desativá-lo; setupwraith e tvlauncher desativados, Home no
+  launcher novo depois de reiniciar (52 MB contra 208 MB do tvlauncher). Cor de
+  fundo pelo `atvleve theme` funcionou. Nada de confirm_first validado ainda:
+  mover para safe_to_disable só depois de testar.

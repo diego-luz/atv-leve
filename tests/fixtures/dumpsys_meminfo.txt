@@ -1,0 +1,26 @@
+Applications Memory Usage (in Kilobytes):
+Uptime: 5938231 Realtime: 5938231
+
+Total RSS by process:
+    301,220K: system (pid 612)
+    210,004K: com.google.android.apps.tv.launcherx (pid 1402 / activities)
+    150,876K: com.google.android.gms.persistent (pid 1120)
+
+Total RSS by OOM adjustment:
+    301,220K: System
+
+Total PSS by process:
+    187,532K: system (pid 612)
+    142,210K: com.google.android.apps.tv.launcherx (pid 1402 / activities)
+     98,320K: com.google.android.katniss:search (pid 2210)
+     87,004K: com.google.android.gms.persistent (pid 1120)
+     54,112K: com.android.systemui (pid 801)
+     31,880K: com.example.vendorads (pid 2550)
+      9,876K: com.example.vendorstore (pid 2602)
+
+Total PSS by OOM adjustment:
+    187,532K: System
+        187,532K: system (pid 612)
+
+Total PSS by category:
+    250,000K: Dalvik

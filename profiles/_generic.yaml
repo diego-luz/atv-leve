@@ -1,0 +1,123 @@
+# Regras válidas para QUALQUER TV. Esta é a rede de segurança do projeto.
+#
+# - `protected` aceita curingas (glob): `*` = qualquer sequência, `?` = um caractere.
+# - Pacote protegido NUNCA entra em plano, nem com --include.
+# - Além desta lista, todo pacote que oferece uma tela inicial (HOME) é protegido
+#   automaticamente, descoberto na hora na TV conectada.
+# - Na dúvida, proteja. É melhor deixar um app pesado ligado do que deixar a TV
+#   sem imagem, sem controle remoto ou sem como abrir as configurações.
+# - Qualquer mudança aqui precisa de teste em tests/test_protection.py.
+
+brand: generic
+model: generic
+
+protected:
+  # --- Núcleo do sistema ---
+  - android
+  - com.android.shell
+  - com.android.systemui*
+  - com.android.phone
+  - com.android.server.*
+  - com.android.externalstorage
+  - com.android.keychain
+  - com.android.certinstaller
+  - com.android.localtransport
+  - com.android.location.fused
+  - com.android.ext.services
+  - com.google.android.ext.services
+  - com.google.android.ext.shared
+  - com.android.modulemetadata
+  - com.google.android.modulemetadata
+  - com.android.providers.*
+  - com.google.android.providers.*
+  - "*overlay*"            # overlays de recursos (RRO): desativar quebra a interface
+  - "*.auto_generated_rro*"
+  - com.android.inputdevices      # layouts de teclado/controle
+  - com.android.intentresolver    # tela "abrir com" do sistema
+  - com.android.rkpdapp           # chaves de segurança (DRM / atestação)
+  - com.android.cts.*             # shims usados pelo sistema de atualização
+
+  # --- Instalação de apps e permissões ---
+  - com.android.packageinstaller
+  - com.google.android.packageinstaller
+  - com.android.permissioncontroller
+  - com.google.android.permissioncontroller
+
+  # --- Google Play e serviços ---
+  - com.android.vending
+  - com.google.android.gms
+  - com.google.android.gms.*
+  - com.google.android.gsf
+  - com.google.android.gsf.*
+
+  # --- WebView (vários apps dependem dela para abrir) ---
+  - com.android.webview
+  - com.google.android.webview
+  - com.google.android.trichromelibrary*
+
+  # --- Rede, Wi-Fi e Bluetooth (controle remoto costuma ser Bluetooth) ---
+  - com.android.bluetooth*
+  - com.google.android.bluetooth*
+  - com.android.networkstack*
+  - com.google.android.networkstack*
+  - com.android.wifi*
+  - com.google.android.wifi*
+  - "*tethering*"
+  - com.android.connectivity*
+  - com.google.android.connectivity*
+
+  # --- Teclado / métodos de entrada ---
+  - com.android.inputmethod*
+  - com.google.android.inputmethod*
+  - com.google.android.leanback.ime
+  - "*.ime"
+  - "*.ime.*"
+
+  # --- Telas iniciais conhecidas (o launcher atual é protegido também em tempo de execução) ---
+  - com.google.android.tvlauncher
+  - com.google.android.leanbacklauncher
+  - com.google.android.apps.tv.launcherx
+  - "*launcher*"
+
+  # --- Configurações (Android e fabricante) e assistente de configuração inicial ---
+  - com.android.settings
+  - com.android.tv.settings
+  - "*settings*"
+  - "*setting*"
+  - com.google.android.tungsten.setupwraith
+  - "*setupwizard*"
+  - "*setupwraith*"
+  - "*provision*"
+
+  # --- TV: entradas de vídeo (HDMI/TIF), sintonizador, CEC e controle remoto ---
+  - com.android.tv*
+  - "*tvinput*"
+  - "*livetv*"
+  - "*tuner*"
+  - "*hdmi*"
+  - "*cec*"
+  - "*remote*"
+  - "*pairing*"
+  - "*keyevent*"
+
+  # --- Pilhas dos fabricantes de chip (HDMI, imagem, som e controle moram aqui) ---
+  # Amplo de propósito: só deixar de proteger depois de testar em TV real.
+  - com.mediatek.*
+  - com.realtek.*
+  - com.amlogic.*
+  - com.hisilicon.*
+  - com.rockchip.*
+  - com.droidlogic.*
+  - com.mstar.*
+  - com.dolby.*            # serviço de áudio
+
+  # --- Menus de fábrica e serviço (calibração de painel e som) ---
+  - "*factory*"
+  - "*serialport*"
+
+# Sem candidatos genéricos: listas de remoção vêm de perfis validados em TV real.
+safe_to_disable: []
+confirm_first: []
+
+notes: >
+  Regras de proteção comuns a todas as TVs. Revisar com cuidado e com testes.

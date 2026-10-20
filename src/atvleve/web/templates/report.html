@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% from "_ui.html" import icon, hidden, intro with context %}
+{% block title %}{{ r.info.model or "TV" }} · ATV Leve{% endblock %}
+{% block nav %}<span class="live">{{ r.host }}</span><span class="hide-sm">{{ r.ctx.profile.name if r.ctx.profile else "sem perfil" }}</span>{% endblock %}
+{% block nav_cta %}
+<form method="post" action="{{ url_for('analyze') }}" data-loading="Analisando a TV de novo">{{ hidden(form) }}
+  <button class="nav-cta" type="submit">Analisar de novo</button>
+</form>
+{% endblock %}
+{% block main %}
+{% set i = r.info %}
+{% set REC_ICON = {"safe": "shield", "confirm": "layers", "tune": "pulse", "launcher": "home", "theme": "palette",
+                   "heavy": "chart", "storage": "alert", "profile": "link"} %}
+{% set REC_TINT = {"alto": "", "médio": "teal", "baixo": "emerald"} %}
+<section class="hero compact">
+  <div class="orb o1" aria-hidden="true"></div>
+  <span class="hero-label">{{ icon("tv") }}Android {{ i.release or "?" }} · SDK {{ i.sdk or "?" }}{% if i.low_ram == "true" %} · modo pouca RAM{% endif %}</span>
+  <h1 class="display">{{ i.brand or "TV" }}<br><span class="grad">{{ i.model or "modelo desconhecido" }}</span></h1>
+  <p class="lead">
+    {% if r.recommendations %}<em>{{ r.recommendations | length }} melhoria(s)</em> encontrada(s) para esta TV.{% else %}Nada urgente para melhorar agora.{% endif %}
+    {% if i.build_id %}<span class="muted"> Build {{ i.build_id }}.</span>{% endif %}
+  </p>
+  {% if r.recommendations | selectattr("key", "in", ["safe", "confirm", "tune"]) | list %}
+  <div class="hero-actions">
+    <form method="post" action="{{ url_for('review_page') }}" data-loading="Montando o plano">{{ hidden(form) }}
+      <button class="btn-primary" type="submit"><span>Revisar e aplicar{{ icon("arrow") }}</span></button>
+    </form>
+    <a class="btn-outline" href="#melhorias">Ver melhorias</a>
+  </div>
+  {% endif %}
+  {% if not r.health.ok or r.tips %}
+  <div class="chips">
+    {% if not r.health.ok %}<span class="chip bad">{{ r.health.problems | join("; ") }}</span>{% endif %}
+    {% for t in r.tips %}<span class="chip">{{ t }}</span>{% endfor %}
+  </div>
+  {% endif %}
+</section>
+
+<section class="ring panel strong reveal">
+  <div class="glass wash" style="padding: clamp(1.4rem, 3vw, 2.4rem)">
+    <div class="grid grid-4">
+      <div class="stat"><span class="stat-label">RAM total</span><span class="stat-value">{{ i.mem_total_kb | kb }}</span>
+        <span class="stat-note pale">{{ "modo pouca RAM" if i.low_ram == "true" else "memória do aparelho" }}</span></div>
+      <div class="stat"><span class="stat-label">RAM livre agora</span>
+        <span class="stat-value">{{ i.mem_available_kb | kb }}{% if r.mem_free_ratio is not none %}<small>{{ (r.mem_free_ratio * 100) | round | int }}%</small>{% endif %}</span>
+        {% if r.mem_free_ratio is not none %}<div class="bar thin" aria-hidden="true"><span style="width:{{ (r.mem_free_ratio * 100) | round(1) }}%"></span></div>{% endif %}</div>
+      <div class="stat"><span class="stat-label">Armazenamento</span><span class="stat-value">{{ i.data_free_kb | kb }}</span>
+        <span class="stat-note teal">livres de {{ i.data_total_kb | kb }}</span>
+        {% if i.data_total_kb %}<div class="bar thin teal" aria-hidden="true"><span style="width:{{ ((i.data_free_kb or 0) / i.data_total_kb * 100) | round(1) }}%"></span></div>{% endif %}</div>
+      <div class="stat"><span class="stat-label">Apps instalados</span><span class="stat-value">{{ r.ctx.packages | length }}</span>
+        <span class="stat-note emerald">{{ r.counts[Category.PROTECTED] }} protegidos</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="melhorias">
+  {{ intro("Melhorias", "O que vale a pena<br>ajustar.", "Tudo é revisado antes e faz backup. Dá para desfazer com um clique.") }}
+  {% if r.recommendations %}
+  <div class="grid grid-3">
+    {% for rec in r.recommendations %}
+    {% set level = {"alto": 3, "médio": 2, "baixo": 1}[rec.impact] %}
+    <div class="ring reveal"><article class="glass card lift">
+      <div class="card-top">
+        <span class="icon-chip {{ REC_TINT[rec.impact] }}">{{ icon(REC_ICON.get(rec.key, "layers")) }}</span>
+        <span class="impact">Impacto {{ rec.impact }} <i aria-hidden="true">{% for n in range(3) %}<b class="{{ 'on' if n < level }}"></b>{% endfor %}</i></span>
+      </div>
+      <h3 class="h4">{{ rec.title }}</h3>
+      <p>{{ rec.text }}</p>
+      {% if rec.items %}
+      <ul>
+        {% for it in rec.items[:4] %}<li>{{ it }}</li>{% endfor %}
+        {% if rec.items | length > 4 %}<li class="more">+ {{ rec.items | length - 4 }} outro(s)</li>{% endif %}
+      </ul>
+      {% endif %}
+      <div class="card-actions">
+      {% if rec.key in ["safe", "confirm", "tune"] %}
+        <form method="post" action="{{ url_for('review_page') }}" data-loading="Montando o plano">{{ hidden(form) }}
+          <button class="btn-soft btn-sm" type="submit">Revisar e aplicar</button></form>
+      {% elif rec.key == "theme" %}
+        <form method="post" action="{{ url_for('theme_page') }}" data-loading="Lendo o tema">{{ hidden(form) }}
+          <button class="btn-soft btn-sm" type="submit">Escolher a cor</button></form>
+      {% elif rec.key == "launcher" %}
+        <form method="post" action="{{ url_for('launcher_page') }}" data-loading="Procurando launchers">{{ hidden(form) }}
+          <button class="btn-soft btn-sm" type="submit">Trocar tela inicial</button></form>
+      {% elif rec.command %}<div class="cmd" style="width:100%"><code>{{ rec.command }}</code><button type="button" data-copy="{{ rec.command }}">Copiar</button></div>{% endif %}
+      </div>
+    </article></div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="notice ok"><strong>Tudo certo.</strong><p>Esta TV já está enxuta para o que o perfil conhece.</p></div>
+  {% endif %}
+</section>
+
+<section class="section">
+  {{ intro("Memória", "Quem está usando<br>a memória.", (r.metric or "—") ~ " por processo, agora.") }}
+  {% if r.heavy %}
+  <div class="ring reveal"><div class="glass mem-list" role="table" aria-label="Uso de memória por processo">
+    {% for p in r.heavy %}
+    {% set tint = {Category.PROTECTED: "teal", Category.UNKNOWN: "cyan"}.get(p.category, "") %}
+    <div class="mem-row" role="row" title="{{ p.name }} · {{ p.kb | kb }} · {{ CATEGORY_LABEL[p.category] }}">
+      <span class="name" role="cell">{{ p.name }}</span>
+      <span class="bar {{ tint }}" role="presentation"><span style="width:{{ (p.share * 100) | round(1) }}%"></span></span>
+      <span class="mb" role="cell">{{ p.kb | kb }}</span>
+      <span class="cat {{ CATEGORY_LABEL[p.category] }}" role="cell">{{ CATEGORY_LABEL[p.category] }}</span>
+    </div>
+    {% endfor %}
+  </div></div>
+  {% else %}<p class="hint">Não foi possível ler o uso de memória desta TV.</p>{% endif %}
+</section>
+
+<section class="section">
+  {{ intro("Apps", "Apps desta TV.", "Clique numa categoria para ver a lista completa.") }}
+  {% set descs = {
+    Category.SAFE: "Testados neste modelo. Entram no plano.",
+    Category.CONFIRM: "Prováveis candidatos. O apply pergunta um por um.",
+    Category.UNKNOWN: "Ninguém validou ainda. Só com --include.",
+    Category.PROTECTED: "Nunca são tocados: sistema, Play Store, launcher, controle, HDMI." } %}
+  <div class="grid grid-4">
+    {% for cat in [Category.SAFE, Category.CONFIRM, Category.UNKNOWN, Category.PROTECTED] %}
+    <button class="cat-card reveal" type="button" data-dialog="dlg-{{ loop.index }}">
+      <div class="stat">
+        <span class="cat {{ CATEGORY_LABEL[cat] }}">{{ CATEGORY_LABEL[cat] }}</span>
+        <span class="stat-value">{{ r.counts[cat] }}</span>
+        <span class="small" style="color: var(--text-2)">{{ descs[cat] }}</span>
+      </div>
+    </button>
+    {% endfor %}
+  </div>
+  {% for cat in [Category.SAFE, Category.CONFIRM, Category.UNKNOWN, Category.PROTECTED] %}
+  {% set items = r.by_category(cat) %}
+  <dialog id="dlg-{{ loop.index }}" aria-label="Apps {{ CATEGORY_LABEL[cat] }}">
+    <div class="dlg-head"><span class="cat {{ CATEGORY_LABEL[cat] }}">{{ items | length }}</span><h3>{{ CATEGORY_LABEL[cat] | capitalize }}</h3><button class="btn-outline btn-sm" type="button" data-close>Fechar</button></div>
+    {% if items %}
+    <ul class="pkg-list">{% for c in items %}<li>{{ c.name }}{% if c.package.state != "enabled" %} <em>({{ "desativado" if c.package.state == "disabled" else "removido" }})</em>{% endif %}{% if not c.package.system %} <em>(usuário)</em>{% endif %}</li>{% endfor %}</ul>
+    {% else %}<p class="hint" style="padding:1rem 1.4rem">Nenhum app nesta categoria.</p>{% endif %}
+  </dialog>
+  {% endfor %}
+</section>
+{% endblock %}

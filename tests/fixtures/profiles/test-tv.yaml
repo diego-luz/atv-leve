@@ -1,0 +1,17 @@
+brand: Aiwa
+model: AWS-TV-32-BL-02-A
+match:
+  ro.product.model: [AWS-TV-32-BL-02-A]
+android_release: "14"
+protected:
+  - com.example.vendorstore.core
+safe_to_disable:
+  - com.google.android.play.games
+  - com.example.vendorstore
+  - com.example.homebreaker
+  - com.example.alreadyoff
+  - com.google.android.gms        # wrongly listed: protection must win
+confirm_first:
+  - com.google.android.katniss
+  - com.example.vendorads
+notes: perfil de teste

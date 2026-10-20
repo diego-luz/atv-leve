@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% from "_ui.html" import icon, hidden, intro with context %}
+{% block title %}Revisar · ATV Leve{% endblock %}
+{% block nav %}<span class="live">{{ host }}</span><span class="hide-sm">Passo 1 de 2</span>{% endblock %}
+{% block main %}
+<form method="post" action="{{ url_for('apply') }}" data-loading="Aplicando na TV · não desligue">{{ hidden(form) }}
+  <section class="hero compact">
+    <span class="hero-label">{{ icon("shield") }}{{ ctx.info.brand }} · {{ ctx.profile.name if ctx.profile else "sem perfil" }}</span>
+    <h1 class="display">Escolha o que<br><span class="grad">aplicar.</span></h1>
+    <p class="lead">Os apps são <em>desativados</em>, não apagados. Antes de tudo o ATV Leve salva um backup, e depois de cada lote confere se a tela inicial continua funcionando.</p>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    {{ intro("01 · Apps", "Apps", "Os \"confirmar\" vêm desmarcados: marque só o que você não usa.") }}
+    {% if choices %}
+    <div class="choices cols">
+      {% for c in choices %}
+      <label class="choice reveal">
+        <input type="checkbox" name="pkg" value="{{ c.name }}" {% if c.checked %}checked{% endif %}>
+        <span class="box" aria-hidden="true"></span>
+        <span class="choice-body">
+          <span class="choice-top"><code>{{ c.name }}</code><span class="cat {{ CATEGORY_LABEL[c.category] }}">{{ CATEGORY_LABEL[c.category] }}</span></span>
+          <span class="choice-desc">{{ c.description or c.reason }}</span>
+        </span>
+      </label>
+      {% endfor %}
+    </div>
+    {% else %}<p class="hint">Nenhum app candidato para esta TV.</p>{% endif %}
+  </section>
+
+  {% if plan.settings_needed %}
+  <section class="section">
+    {{ intro("02 · Desempenho", "Animações", "Os valores originais vão para o backup.") }}
+    <div class="choices cols">
+      <label class="choice reveal">
+        <input type="checkbox" name="tune" value="sim" checked>
+        <span class="box" aria-hidden="true"></span>
+        <span class="choice-body">
+          <span class="choice-top"><b>Acelerar animações para 0.5</b></span>
+          <span class="choice-desc">{% for s in plan.settings_needed %}{{ s.key }}: {{ s.current or "padrão" }} → {{ s.value }}{% if not loop.last %} · {% endif %}{% endfor %}</span>
+        </span>
+      </label>
+    </div>
+  </section>
+  {% endif %}
+
+  <section class="section">
+    {{ intro("03 · Limpeza", "Cache", "Não precisa de backup: o cache se refaz sozinho.") }}
+    <div class="choices cols">
+      <label class="choice reveal">
+        <input type="checkbox" name="trim" value="sim">
+        <span class="box" aria-hidden="true"></span>
+        <span class="choice-body">
+          <span class="choice-top"><b>Limpar o cache de todos os apps</b></span>
+          <span class="choice-desc">Libera espaço no armazenamento. Os apps abrem um pouco mais devagar na primeira vez depois disso.</span>
+        </span>
+      </label>
+    </div>
+  </section>
+
+  <section class="ring panel strong reveal">
+    <div class="glass wash confirm-bar">
+      <label class="choice">
+        <input type="checkbox" name="entendi" value="sim" required>
+        <span class="box" aria-hidden="true"></span>
+        <span class="choice-body">
+          <span class="choice-top"><b>Entendi</b></span>
+          <span class="choice-desc">A TV pode precisar ser reiniciada depois. Se algo der errado, a próxima tela tem o botão Desfazer, e o reset de fábrica é o último recurso.</span>
+        </span>
+      </label>
+      <button class="btn-primary closing" type="submit"><span>Aplicar agora{{ icon("arrow") }}</span></button>
+    </div>
+  </section>
+</form>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% from "_ui.html" import icon, action with context %}
+<!doctype html>
+<html lang="pt-BR" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000000">
+<title>{% block title %}ATV Leve{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='aura.css') }}">
+</head>
+<body>
+<canvas id="flow" aria-hidden="true"></canvas>
+<div class="blob blob-1" aria-hidden="true"></div>
+<div class="blob blob-2" aria-hidden="true"></div>
+<div class="blob blob-3" aria-hidden="true"></div>
+
+<div class="frame">
+  <div class="nav-wrap">
+    <header class="nav">
+      <a class="brand" href="{{ url_for('index') }}">{{ icon("infinity") }}ATV Leve</a>
+      <div class="nav-links">{% block nav %}<span class="hide-sm">ADB pelo Wi-Fi</span><span class="hide-sm">Sem root</span><span>Local</span>{% endblock %}</div>
+      {% block nav_cta %}{% endblock %}
+    </header>
+  </div>
+
+  <main>{% block main %}{% endblock %}</main>
+
+  <footer class="footer">
+    <p>Analisar não altera nada. Mudanças só por um botão de aplicar, sempre com backup e Desfazer.</p>
+    <nav aria-label="Rodapé"><span>Sem telemetria</span><span>Código aberto</span><span>MIT</span></nav>
+  </footer>
+</div>
+
+<div class="loader" role="status" aria-live="polite">
+  <div class="loader-box">
+    <div class="core"><b><span>00</span><i>%</i></b></div>
+    <p class="loader-text">Conectando na TV</p>
+    <p class="hint">Pode levar alguns segundos. Não desligue a TV.</p>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='site.js') }}"></script>
+</body>
+</html>

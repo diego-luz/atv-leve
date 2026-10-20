@@ -1,0 +1,2 @@
+Filesystem       Size  Used Avail Use% Mounted on
+/dev/block/dm-8  4.3G  3.5G  847M  82% /data

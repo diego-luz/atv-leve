@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% from "_ui.html" import icon, hidden, intro with context %}
+{% block title %}Tela inicial · ATV Leve{% endblock %}
+{% block nav %}<span class="live">{{ host }}</span><span class="hide-sm">Tela inicial</span>{% endblock %}
+{% block main %}
+<form method="post" action="{{ url_for('launcher_swap') }}" data-loading="Trocando a tela inicial · não desligue">{{ hidden(form) }}
+  <section class="hero compact">
+    <div class="orb o1" aria-hidden="true"></div>
+    <span class="hero-label">{{ icon("home") }}Atual: {{ (opts.current or "nenhuma").split("/")[0] }}</span>
+    <h1 class="display">Uma tela inicial<br><span class="grad">mais leve.</span></h1>
+    <p class="lead">O ATV Leve confere que o launcher novo abre, define ele como padrão e só então <em>desativa</em> o assistente de configuração e a tela original, conferindo o Home a cada passo. Nada é desinstalado.</p>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    {{ intro("01 · Launcher", "Escolha o launcher", "Só aparecem os que já estão instalados na TV.") }}
+    {% if opts.alternatives %}
+    <div class="choices cols">
+      {% for c in opts.alternatives %}
+      <label class="choice reveal">
+        <input type="radio" name="launcher" value="{{ c.package }}" {% if loop.first %}checked{% endif %} required>
+        <span class="box" aria-hidden="true"></span>
+        <span class="choice-body">
+          <span class="choice-top"><b>{{ c.label }}</b><code>{{ c.package }}</code></span>
+          <span class="choice-desc">{{ c.component }}</span>
+        </span>
+      </label>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="ring reveal"><div class="glass card">
+      <div class="card-top"><span class="icon-chip amber">{{ icon("alert") }}</span></div>
+      <h3 class="h4">Nenhum launcher alternativo instalado</h3>
+      <p>Na TV, abra a Play Store, instale o <b>FLauncher</b> ou o <b>Projectivy Launcher</b>, abra uma vez e volte aqui. Ou instale o launcher do cleanyourtv com <code>atvleve launcher --install</code>.</p>
+    </div></div>
+    {% endif %}
+  </section>
+
+  {% if opts.alternatives | selectattr("package", "equalto", input_key_pkg) | list %}
+  <section class="section">
+    {{ intro("02 · Controle", "Botão Input", "Só para o launcher do cleanyourtv.") }}
+    <div class="choices cols">
+      <label class="choice reveal">
+        <input type="checkbox" name="input_key" value="sim">
+        <span class="box" aria-hidden="true"></span>
+        <span class="choice-body">
+          <span class="choice-top"><b>Manter o botão Input do controle funcionando</b></span>
+          <span class="choice-desc">Só marque se, depois da troca, o botão que muda para o HDMI parar de funcionar (em muitas TVs quem atende é o app de TV do fabricante, não a tela inicial). Liga um serviço de acessibilidade do launcher que só escuta esse botão e não lê a tela. Volta ao que era no Desfazer.</span>
+        </span>
+      </label>
+    </div>
+  </section>
+  {% endif %}
+
+  {% if opts.alternatives %}
+  <section class="ring panel strong reveal">
+    <div class="glass wash confirm-bar">
+      <label class="choice">
+        <input type="checkbox" name="entendi" value="sim" required>
+        <span class="box" aria-hidden="true"></span>
+        <span class="choice-body">
+          <span class="choice-top"><b>Entendi</b></span>
+          <span class="choice-desc">Sem a tela original somem as recomendações e os anúncios dela. Para voltar, use o botão Desfazer: a tela original é reativada e volta a ser o padrão.</span>
+        </span>
+      </label>
+      <button class="btn-primary closing" type="submit"><span>Trocar agora{{ icon("arrow") }}</span></button>
+    </div>
+  </section>
+  {% endif %}
+</form>
+{% endblock %}

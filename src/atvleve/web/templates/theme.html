@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from "_ui.html" import icon, hidden, intro with context %}
+{% block title %}Tema · ATV Leve{% endblock %}
+{% block nav %}<span class="live">{{ host }}</span><span class="hide-sm">Tema</span>{% endblock %}
+{% block main %}
+{% if not opts.available %}
+  <section class="hero compact">
+    <span class="hero-label">{{ icon("palette") }}Tema</span>
+    <h1 class="display">Só com o<br><span class="grad">launcher leve.</span></h1>
+    <p class="lead">A cor de fundo é do launcher do cleanyourtv (<code>com.gathin.tvhome</code>). Troque a tela inicial primeiro.</p>
+  </section>
+{% else %}
+<form method="post" action="{{ url_for('theme_apply') }}" data-loading="Aplicando o tema · a tela inicial vai reiniciar">{{ hidden(form) }}
+  <section class="hero compact">
+    <span class="hero-label">{{ icon("palette") }}Atual {{ opts.current }}</span>
+    {% if o %}
+    <h1 class="display">Cor nova<br><span class="grad">na TV.</span></h1>
+    <p class="lead">Fundo: <em>{{ o.previous }} → {{ o.color }}</em>. A tela inicial reiniciou com a cor nova. Backup {{ o.backup.path.name }}; o Desfazer volta ao tema anterior.{% if o.warning %} {{ o.warning }}{% endif %}</p>
+    {% else %}
+    <h1 class="display">Cor de fundo<br><span class="grad">da tela inicial.</span></h1>
+    <p class="lead">Só a cor muda; o resto do tema fica como está. As cores escuras deixam o texto branco do launcher legível.</p>
+    {% endif %}
+  </section>
+
+  <section class="section" style="padding-top:0">
+    {{ intro("01 · Cores", "Escolha uma cor", "Uma das prontas ou qualquer outra no seletor. A prévia mostra como fica.") }}
+    <div class="theme-layout">
+      <div class="reveal">
+        <div class="tv-preview" data-preview style="--bg: {{ opts.current }}" aria-hidden="true">
+          <span class="tvp-clock">20:45</span><span class="tvp-hi">BOA NOITE</span>
+          <span class="tvp-dock"><i></i><i></i><i></i><i></i></span>
+        </div>
+        <p class="hint">Prévia aproximada da tela inicial.</p>
+      </div>
+      <div class="swatches">
+        {% for hex, name in opts.presets.items() %}
+        <label class="choice swatch">
+          <input type="radio" name="color" value="{{ hex }}" {% if hex == opts.current %}checked{% endif %}>
+          <span class="chip-color" style="background: {{ hex }}"></span>
+          <span class="choice-body"><span class="choice-top"><b>{{ name }}</b></span><span class="choice-desc">{{ hex }}</span></span>
+        </label>
+        {% endfor %}
+        <label class="choice swatch">
+          <input type="color" value="{{ opts.current }}" data-custom aria-label="Outra cor">
+          <span class="chip-color" style="background: {{ opts.current }}"></span>
+          <span class="choice-body"><span class="choice-top"><b>Outra cor</b></span><span class="choice-desc">Escolher no seletor</span></span>
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <section class="ring panel strong reveal">
+    <div class="glass wash confirm-bar">
+      <p style="margin:0">A tela inicial da TV reinicia para pegar a cor nova. O tema anterior vai para o backup.</p>
+      <button class="btn-primary closing" type="submit"><span>Aplicar na TV{{ icon("arrow") }}</span></button>
+    </div>
+  </section>
+</form>
+{% endif %}
+{% set back_label = "Voltar ao relatório" %}
+{% include "_actions.html" %}
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% from "_ui.html" import icon with context %}
+{% block title %}Resultado · ATV Leve{% endblock %}
+{% block nav %}<span class="live">{{ host }}</span><span class="hide-sm">Backup {{ o.backup.path.name }}</span>{% endblock %}
+{% block main %}
+{% if mode == "apply" %}
+  {% set res = o.result %}
+  <section class="hero compact">
+    {% if res.aborted %}
+    <span class="hero-label">{{ icon("alert") }}Passo 2 de 2 · interrompido</span>
+    <h1 class="display">Parado por<br><span class="grad">segurança.</span></h1>
+    <p class="lead">{{ res.aborted | plain }}.</p>
+    {% else %}
+    <span class="hero-label">{{ icon("check") }}Passo 2 de 2 · concluído</span>
+    <h1 class="display">Pronto.<br><span class="grad">Reinicie a TV.</span></h1>
+    <p class="lead"><em>{{ res.done | length }} app(s)</em> desativado(s){% if o.plan.settings_needed and not res.settings_failed %} e animações aceleradas{% endif %}. Depois de reiniciar, teste a tela inicial, o controle, o HDMI e seus apps.</p>
+    {% endif %}
+  </section>
+  <section class="ring reveal"><div class="glass log">
+    {% for name in res.done %}<div class="log-row"><span class="cat seguro">feito</span><code>{{ name }}</code></div>{% endfor %}
+    {% for name in res.rolled_back %}<div class="log-row"><span class="cat confirmar">revertido</span><code>{{ name }}</code></div>{% endfor %}
+    {% for name, why in res.failed %}<div class="log-row"><span class="cat bad">a TV recusou</span><code>{{ name }}</code><span class="why">{{ why | plain }}</span></div>{% endfor %}
+    {% if o.cache_freed_kb is not none %}<div class="log-row"><span class="cat seguro">cache</span><span>{{ o.cache_freed_kb | kb }} liberados no armazenamento</span></div>{% endif %}
+    {% for k in res.settings_failed %}<div class="log-row"><span class="cat bad">falhou</span><code>{{ k }}</code></div>{% endfor %}
+    {% if not (res.done or res.rolled_back or res.failed) and o.plan.settings_needed %}<div class="log-row"><span class="cat seguro">feito</span><span>Ajustes de animação.</span></div>{% endif %}
+  </div></section>
+{% elif mode == "launcher" %}
+  {% set res = o.result %}
+  <section class="hero compact">
+    {% if res.ok %}
+    <span class="hero-label">{{ icon("home") }}Tela inicial trocada</span>
+    <h1 class="display">Tela nova.<br><span class="grad">Reinicie a TV.</span></h1>
+    <p class="lead">Depois de reiniciar, aperte Home no controle e confira se abre a tela nova.{% if not o.health.ok %} Atenção: {{ o.health.problems | join("; ") }}.{% endif %}</p>
+    {% else %}
+    <span class="hero-label">{{ icon("alert") }}Troca revertida</span>
+    <h1 class="display">Nada mudou.<br><span class="grad">Tudo voltou.</span></h1>
+    <p class="lead">{{ res.message | plain }}. A tela original continua como padrão.</p>
+    {% endif %}
+  </section>
+  {% if res.ok and o.mem_before_kb and o.mem_after_kb %}
+  <section class="grid grid-3 reveal" style="margin-bottom:1.2rem">
+    <div class="stat"><span class="stat-label">RAM livre antes</span><span class="stat-value">{{ o.mem_before_kb | kb }}</span></div>
+    <div class="stat"><span class="stat-label">RAM livre depois</span><span class="stat-value">{{ o.mem_after_kb | kb }}</span>
+      <span class="stat-note emerald">{{ "+" if o.mem_after_kb >= o.mem_before_kb else "−" }}{{ (o.mem_after_kb - o.mem_before_kb) | abs | kb }}</span></div>
+    <div class="stat"><span class="stat-label">Desativados</span><span class="stat-value">{{ res.disabled | length }}</span><span class="stat-note pale">nada desinstalado</span></div>
+  </section>
+  {% endif %}
+  <section class="ring reveal"><div class="glass log">
+    {% for line in o.log %}<div class="log-row"><span>{{ line | plain }}</span></div>{% endfor %}
+  </div></section>
+{% else %}
+  {% set rep = o.report %}
+  <section class="hero compact">
+    <span class="hero-label">{{ icon("undo") }}Desfeito</span>
+    <h1 class="display">{% if rep.ok %}Tudo como<br><span class="grad">era antes.</span>{% else %}Desfeito em<br><span class="grad">parte.</span>{% endif %}</h1>
+    <p class="lead"><em>{{ rep.done | length }} item(ns)</em> restaurado(s). Reinicie a TV para concluir.{% if not o.health.ok %} Atenção: {{ o.health.problems | join("; ") }}.{% endif %}</p>
+  </section>
+  <section class="ring reveal"><div class="glass log">
+    {% for d in rep.done %}<div class="log-row"><span class="cat seguro">restaurado</span><code>{{ d }}</code></div>{% endfor %}
+    {% for f in rep.failed %}<div class="log-row"><span class="cat bad">falhou</span><code>{{ f | plain }}</code></div>{% endfor %}
+    {% if not rep.done and not rep.failed %}<div class="log-row"><span>Nada precisava voltar: a TV já estava como no backup.</span></div>{% endif %}
+  </div></section>
+{% endif %}
+{% include "_actions.html" %}
+{% endblock %}

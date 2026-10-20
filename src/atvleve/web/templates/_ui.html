@@ -1,0 +1,44 @@
+{#- Componentes do painel. Ícones: Iconify Solar (linear), traço 1.5, cor herdada. -#}
+{% set ICONS = {
+  "arrow": '<path stroke-linecap="round" stroke-linejoin="round" d="M4 12H20M14 18L20 12L14 6"/>',
+  "infinity": '<path stroke-linecap="round" d="M12 12C10.5 15 9.76 17 7 17C4.24 17 2 14.76 2 12C2 9.24 4.24 7 7 7C8.13 7 9.16 7.37 10 8"/><path stroke-linecap="round" opacity=".5" d="M10 8C9.16 7.37 8.13 7 7 7M12 12C13.5 9 14.24 7 17 7C19.76 7 22 9.24 22 12C22 14.76 19.76 17 17 17C15.87 17 14.84 16.63 14 16"/>',
+  "shield": '<path stroke-linecap="round" d="M3 10.42C3 7.22 3 5.62 3.38 5.08C3.76 4.54 5.26 4.03 8.26 3L8.84 2.8C10.41 2.27 11.19 2 12 2C12.81 2 13.6 2.27 15.16 2.8L15.74 3C18.74 4.03 20.25 4.54 20.62 5.08C21 5.62 21 7.22 21 10.42V11.99C21 17.63 16.76 20.37 14.1 21.53C13.38 21.84 13.02 22 12 22C10.98 22 10.62 21.84 9.9 21.53C7.24 20.37 3 17.63 3 11.99V10.42Z"/><path stroke-linecap="round" d="M3 11L12 8L21 11M12 2V21.5"/>',
+  "chart": '<path stroke-linecap="round" d="M22 22H2M21 22V14.5C21 13.67 20.33 13 19.5 13H16.5C15.67 13 15 13.67 15 14.5V22M15 22V5C15 3.59 15 2.88 14.56 2.44C14.12 2 13.41 2 12 2C10.59 2 9.88 2 9.44 2.44C9 2.88 9 3.59 9 5V22M9 22V9.5C9 8.67 8.33 8 7.5 8H4.5C3.67 8 3 8.67 3 9.5V22"/>',
+  "refresh": '<path stroke-linecap="round" stroke-linejoin="round" d="M3.68 13V11.33C3.68 6.73 7.44 3 12.08 3C15.12 3 17.78 4.6 19.25 7M2 11.33L3.68 13L5.36 11.33M20.31 11V12.67C20.31 17.27 16.54 21 11.88 21C8.83 21 6.16 19.4 4.68 17M22 12.67L20.31 11L18.63 12.67"/>',
+  "layers": '<path d="M4.98 9.69C2.99 8.89 2 8.49 2 8C2 7.51 2.99 7.11 4.98 6.31L7.79 5.19C9.77 4.4 10.77 4 12 4C13.23 4 14.23 4.4 16.21 5.19L19.02 6.31C21.01 7.11 22 7.51 22 8C22 8.49 21.01 8.89 19.02 9.69L16.21 10.81C14.23 11.6 13.23 12 12 12C10.77 12 9.77 11.6 7.79 10.81L4.98 9.69Z"/><path d="M5.77 10L4.98 10.31C2.99 11.11 2 11.51 2 12C2 12.49 2.99 12.89 4.98 13.69L7.79 14.81C9.77 15.6 10.77 16 12 16C13.23 16 14.23 15.6 16.21 14.81L19.02 13.69C21.01 12.89 22 12.49 22 12C22 11.51 21.01 11.11 19.02 10.31L18.23 10M5.77 14L4.98 14.31C2.99 15.11 2 15.51 2 16C2 16.49 2.99 16.89 4.98 17.69L7.79 18.81C9.77 19.6 10.77 20 12 20C13.23 20 14.23 19.6 16.21 18.81L19.02 17.69C21.01 16.89 22 16.49 22 16C22 15.51 21.01 15.11 19.02 14.31L18.23 14"/>',
+  "pulse": '<path stroke-linecap="round" d="M2 15H5C5.63 15 5.95 15 6.23 15.12C6.52 15.24 6.74 15.47 7.17 15.93L8.31 17.13C8.7 17.53 8.89 17.73 9.12 17.72C9.36 17.7 9.52 17.48 9.85 17.03L13.48 12.02C13.82 11.55 13.99 11.31 14.23 11.3C14.47 11.29 14.66 11.51 15.04 11.94L16.82 13.98C17.26 14.48 17.48 14.73 17.78 14.87C18.07 15 18.41 15 19.08 15H22"/><path d="M2 12C2 7.29 2 4.93 3.46 3.46C4.93 2 7.29 2 12 2C16.71 2 19.07 2 20.54 3.46C22 4.93 22 7.29 22 12C22 16.71 22 19.07 20.54 20.54C19.07 22 16.71 22 12 22C7.29 22 4.93 22 3.46 20.54C2 19.07 2 16.71 2 12Z"/>',
+  "tv": '<rect x="2" y="4" width="20" height="13" rx="3"/><path stroke-linecap="round" d="M8 21H16M12 17V21"/>',
+  "home": '<path stroke-linejoin="round" d="M3 10.5L12 3L21 10.5V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V10.5Z"/><path d="M9.5 21V15H14.5V21"/>',
+  "palette": '<path d="M12 22C6.48 22 2 17.52 2 12C2 6.48 6.48 2 12 2C17.52 2 22 6.03 22 11C22 14.31 19.31 17 16 17H14.23C13.42 17 12.77 17.66 12.77 18.46C12.77 18.83 12.91 19.17 13.15 19.43C13.39 19.69 13.54 20.04 13.54 20.42C13.54 21.25 12.86 22 12 22Z"/><circle cx="7.5" cy="11.5" r="1.2"/><circle cx="10.5" cy="7.5" r="1.2"/><circle cx="15.5" cy="7.5" r="1.2"/>',
+  "check": '<path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.5L9.5 17.5L19.5 7.5"/>',
+  "alert": '<path stroke-linecap="round" d="M12 8V13"/><circle cx="12" cy="16.2" r=".6" fill="currentColor"/><path d="M10.27 3.98C11.04 2.65 12.96 2.65 13.73 3.98L21.62 17.65C22.39 18.98 21.43 20.65 19.89 20.65H4.11C2.57 20.65 1.61 18.98 2.38 17.65L10.27 3.98Z"/>',
+  "undo": '<path stroke-linecap="round" stroke-linejoin="round" d="M4 9H15C18.31 9 21 11.69 21 15C21 18.31 18.31 21 15 21H8M4 9L8 5M4 9L8 13"/>',
+  "link": '<path stroke-linecap="round" d="M10 14C10.6 14.6 11.4 15 12.3 15C13.2 15 14 14.6 14.6 14L18.1 10.5C19.4 9.2 19.4 7.1 18.1 5.9C16.9 4.6 14.8 4.6 13.5 5.9L12.8 6.6M14 10C13.4 9.4 12.6 9 11.7 9C10.8 9 10 9.4 9.4 10L5.9 13.5C4.6 14.8 4.6 16.9 5.9 18.1C7.1 19.4 9.2 19.4 10.5 18.1L11.2 17.4"/>'
+} %}
+
+{% macro icon(name, cls="") -%}
+<svg class="{{ cls }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">{{ ICONS[name] | safe }}</svg>
+{%- endmacro %}
+
+{% macro hidden(form) -%}
+<input type="hidden" name="csrf" value="{{ csrf }}"><input type="hidden" name="ip" value="{{ form.ip }}"><input type="hidden" name="port" value="{{ form.port }}">
+{%- endmacro %}
+
+{#- Botão que é um formulário POST (todas as ações precisam do IP e do token). -#}
+{% macro action(endpoint, label, form, loading, style="primary", ico="arrow", cls="") -%}
+<form method="post" action="{{ url_for(endpoint) }}" data-loading="{{ loading }}" class="{{ cls }}">{{ hidden(form) }}
+  {%- if style == "primary" or style == "closing" %}
+  <button class="btn-primary{{ ' closing' if style == 'closing' }}" type="submit"><span>{{ label }}{{ icon(ico) }}</span></button>
+  {%- else %}
+  <button class="btn-{{ style }}" type="submit">{{ icon(ico) if ico != "arrow" }}{{ label }}</button>
+  {%- endif %}
+</form>
+{%- endmacro %}
+
+{% macro intro(eyebrow, title, text="") -%}
+<div class="section-intro reveal">
+  <p class="eyebrow">{{ eyebrow }}</p>
+  <h2 class="h2">{{ title | safe }}</h2>
+  {% if text %}<p>{{ text }}</p>{% endif %}
+</div>
+{%- endmacro %}

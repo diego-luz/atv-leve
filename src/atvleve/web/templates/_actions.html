@@ -1,0 +1,20 @@
+{#- Ações no fim das páginas de resultado. -#}
+{% from "_ui.html" import icon, hidden with context %}
+<section class="section">
+  <div class="ring panel strong reveal">
+    <div class="glass wash confirm-bar">
+      <div>
+        <p class="eyebrow" style="margin-bottom:.6rem">E agora</p>
+        <p style="margin:0">Reinicie a TV e teste a tela inicial, o controle, o HDMI e seus apps. Se algo estranhar, desfaça.</p>
+      </div>
+      <div class="hero-actions" style="margin:0">
+        <form method="post" action="{{ url_for('undo') }}" data-loading="Desfazendo · não desligue">{{ hidden(form) }}
+          <button class="btn-outline" type="submit">{{ icon("undo") }}Desfazer a última alteração</button>
+        </form>
+        <form method="post" action="{{ url_for('analyze') }}" data-loading="Analisando a TV">{{ hidden(form) }}
+          <button class="btn-primary" type="submit"><span>{{ back_label | default("Analisar de novo") }}{{ icon("arrow") }}</span></button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

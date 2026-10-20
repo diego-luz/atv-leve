@@ -1,0 +1,7 @@
+package:com.android.shell
+package:/system/app/Foo/Foo.apk=com.example.foo
+package:com.google.android.gms uid:10123
+package:android
+
+garbage line
+package:bad name
