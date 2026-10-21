@@ -7,6 +7,10 @@ via ADB, sem root**.
 Feito pensando nas TVs baratas vendidas no Brasil (Aiwa, Philco, Multilaser, Semp,
 TCL, etc.) com 1 a 2 GB de RAM.
 
+[![Release](https://img.shields.io/github/v/release/diego-luz/atv-leve)](https://github.com/diego-luz/atv-leve/releases)
+[![Imagem Docker](https://img.shields.io/badge/docker-ghcr.io%2Fdiego--luz%2Fatv--leve-blue?logo=docker)](https://github.com/diego-luz/atv-leve/pkgs/container/atv-leve)
+[![Licença MIT](https://img.shields.io/github/license/diego-luz/atv-leve)](LICENSE)
+
 - **Diagnostica antes de agir**: mostra RAM, armazenamento e quais apps pesam mais.
 - **Simula antes de fazer**: `atvleve plan` mostra tudo o que seria feito, sem mexer em nada.
 - **Sempre reversível**: faz backup automático e desfaz tudo com `atvleve restore`.
@@ -77,6 +81,9 @@ Python, adb e o painel já vêm dentro da imagem. Você só precisa do
 [Docker](https://docs.docker.com/get-docker/) (no Windows e no macOS, o Docker Desktop).
 
 ### Jeito mais rápido: imagem pronta, sem baixar o projeto
+
+A imagem está publicada em [ghcr.io/diego-luz/atv-leve](https://github.com/diego-luz/atv-leve/pkgs/container/atv-leve)
+(tags `latest` e a versão, como `0.1.0`).
 
 ```bash
 docker run -d --name atvleve -p 127.0.0.1:8765:8765 \
