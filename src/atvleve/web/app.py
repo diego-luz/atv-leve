@@ -106,6 +106,12 @@ def create_app(runner_factory=AdbRunner, allow_remote: bool = False) -> Flask:
         return render_template("index.html", form=form or form_values(), error=plain(exc),
                                **extra), 400
 
+    @app.errorhandler(404)
+    @app.errorhandler(405)
+    def not_found(exc):
+        # 405 = reloading or bookmarking a page that only exists as the answer to a form.
+        return render_template("not_found.html", code=exc.code), exc.code
+
     @app.get("/")
     def index():
         return render_template("index.html", form=form_values())

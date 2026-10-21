@@ -126,6 +126,14 @@ def test_post_from_another_site_is_refused(post, tv):
     assert tv.state_of("com.example.vendorstore") == "enabled"
 
 
+def test_unknown_page_and_reload_lead_back_to_the_panel(client):
+    for url, code in (("/nao-existe", 404), ("/analisar", 405)):
+        res = client.get(url)
+        assert res.status_code == code
+        html = res.get_data(as_text=True)
+        assert "Voltar ao início" in html and "Nada foi alterado" in html
+
+
 def test_foreign_host_header_is_refused(client):
     assert client.get("/", headers={"Host": "rebind.evil.example:8765"}).status_code == 403
 

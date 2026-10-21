@@ -20,6 +20,16 @@ TCL, etc.) com 1 a 2 GB de RAM.
 - Sem internet, sem coleta de dados, sem downloads escondidos. Só conversa com a sua TV
   pela rede local.
 
+**Nesta página:** [Fotos](#como-fica-na-tv) ·
+[Ativar o ADB](#antes-de-tudo-ative-o-adb-na-tv) ·
+[Docker](#opção-a-com-docker) ·
+[Instalação local](#opção-b-instalação-local) ·
+[Como usar](#como-usar) ·
+[Desfazer](#5-se-algo-der-errado) ·
+[Comandos](#todos-os-comandos) ·
+[Perguntas frequentes](#perguntas-frequentes) ·
+[Privacidade](#privacidade)
+
 ---
 
 ## Como fica na TV
@@ -377,6 +387,52 @@ O `tune` (e o `apply`, a menos que você use `--no-tune`) muda as três escalas 
 animação do Android para 0.5. Os menus ficam mais rápidos e o processador trabalha
 menos. Os valores originais vão para o backup. Não há ajustes experimentais ativos
 nesta versão.
+
+## Perguntas frequentes
+
+**Pode estragar a minha TV?**
+O ATV Leve não instala nada no sistema, não pede root e não mexe no que está na lista de
+protegidos (tela inicial, Play Store, configurações, controle, Wi-Fi, HDMI). Ele grava um
+backup antes, aplica de 5 em 5 e desfaz o lote sozinho se a tela inicial sumir. No pior
+caso, o reset de fábrica traz tudo de volta (veja o Plano B em "Leia antes de usar").
+
+**Como desfaço tudo?**
+`atvleve restore --ip IP_DA_TV --all` desfaz todas as alterações do ATV Leve naquela
+TV: os apps desativados voltam e as animações voltam aos valores de antes. No painel, o
+botão **Desfazer** volta a última alteração.
+
+**Perco a garantia?**
+Ativar as opções do desenvolvedor e desativar apps são recursos do próprio Android, e nada
+disso desbloqueia ou modifica o sistema. Mesmo assim, quem decide a garantia é o
+fabricante. Se estiver preocupado, rode `atvleve restore --all` antes de levar a TV à
+assistência.
+
+**Funciona na minha marca?**
+Diagnóstico (`info`, `scan`, `top`), animações (`tune`), troca da tela inicial e cor de
+fundo funcionam em qualquer Android TV / Google TV com ADB. A lista automática de apps
+para desativar só existe para modelos com perfil testado (hoje, uma Aiwa). Sem perfil, o
+ATV Leve não desativa nada sozinho; você pode [contribuir com o perfil da sua
+TV](#contribua-com-o-perfil-da-sua-tv).
+
+**A TV pede autorização toda vez?**
+Não. Na primeira conexão, marque *Sempre permitir deste computador*. A chave fica
+guardada no computador (veja [Privacidade](#privacidade)) e a TV passa a reconhecê-lo.
+
+## Privacidade
+
+O ATV Leve não acessa a internet, não tem telemetria e não envia dados a ninguém. Ele só
+conversa com a sua TV pela rede local, pelo ADB.
+
+O que fica salvo, e só no seu computador:
+
+| O quê | Onde |
+|---|---|
+| Backups (lista de apps e configurações alteradas, para poder desfazer) | `backups/` na pasta do projeto. Sem o projeto baixado: `~/.local/share/atvleve/backups` (Windows: `%APPDATA%\atvleve\backups`). Com `ATVLEVE_HOME`: `ATVLEVE_HOME/backups`. No Docker: `./backups` ou o volume `atvleve-backups` |
+| Chave do ADB (a TV usa para reconhecer o computador) | `~/.android/` (padrão do adb). No Docker: o volume `adb-chave` ou `atvleve-adb` |
+
+O painel web abre só no próprio computador (`127.0.0.1`), não tem cadastro nem cookies, e
+recusa pedidos que venham de outros sites. O `profile-export` gera o perfil sem número de
+série nem dados pessoais; confira o arquivo antes de enviar.
 
 ## Contribua com o perfil da sua TV
 
