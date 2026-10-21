@@ -76,7 +76,29 @@ Agora escolha **um** dos dois jeitos de rodar o ATV Leve:
 Python, adb e o painel já vêm dentro da imagem. Você só precisa do
 [Docker](https://docs.docker.com/get-docker/) (no Windows e no macOS, o Docker Desktop).
 
-### Instalar e subir o painel
+### Jeito mais rápido: imagem pronta, sem baixar o projeto
+
+```bash
+docker run -d --name atvleve -p 127.0.0.1:8765:8765 \
+  -v atvleve-adb:/home/atv/.android -v atvleve-backups:/dados/backups \
+  ghcr.io/diego-luz/atv-leve
+```
+
+Abra **http://localhost:8765**. Para parar, `docker stop atvleve`; para voltar,
+`docker start atvleve`. A imagem tem versão para PC (amd64) e para ARM (arm64, como
+Raspberry Pi e Mac M1).
+
+Linha de comando com a imagem pronta:
+
+```bash
+docker run --rm -it -v atvleve-adb:/home/atv/.android -v atvleve-backups:/dados/backups \
+  ghcr.io/diego-luz/atv-leve doctor --ip 192.168.0.20
+```
+
+Os backups ficam no volume `atvleve-backups`. Para ter os arquivos numa pasta do
+computador, use o jeito abaixo, com o projeto baixado.
+
+### Instalar e subir o painel (com o projeto baixado)
 
 ```bash
 git clone https://github.com/diego-luz/atv-leve.git
