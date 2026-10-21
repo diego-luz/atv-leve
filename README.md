@@ -49,50 +49,97 @@ com `atvleve theme`. Parada na tela inicial, a memória livre passou de ~238 MB 
 
 ---
 
-## Jeito mais fácil: com Docker
+## Antes de tudo: ative o ADB na TV
 
-Se você tem o [Docker](https://docs.docker.com/get-docker/) instalado, não precisa
-instalar Python nem adb: já vem tudo dentro da imagem.
+1. Na TV: **Configurações → Sistema** (ou *Preferências do dispositivo*) **→ Sobre**.
+2. Aperte **OK 7 vezes** em **Build do Android TV OS** até aparecer
+   "Você agora é um desenvolvedor".
+3. Volte e abra **Opções do desenvolvedor**.
+4. Ative **Depuração USB** e, se existir, **Depuração pela rede** / **Depuração por ADB**.
+5. Veja o **IP da TV** em Configurações → Rede e Internet → (sua rede Wi-Fi).
+   Exemplo: `192.168.0.20`.
 
-1. Ative o ADB na TV (veja o [passo 3](#3-ative-o-adb-na-tv) abaixo).
-2. Baixe o projeto e suba o painel:
+O computador e a TV precisam estar **na mesma rede**.
 
-   ```bash
-   git clone https://github.com/SEU_USUARIO/atv-leve.git
-   cd atv-leve
-   docker compose up --build
-   ```
+Agora escolha **um** dos dois jeitos de rodar o ATV Leve:
 
-3. Abra **http://localhost:8765** no navegador e digite o IP da TV. Na primeira vez a TV
-   pergunta se permite a depuração: marque "Sempre permitir" e confirme.
-
-Para parar, aperte Ctrl+C. Na próxima vez basta `docker compose up`.
-
-Prefere a linha de comando? Todos os comandos do guia funcionam assim:
-
-```bash
-docker compose run --rm atvleve doctor --ip 192.168.0.20
-docker compose run --rm atvleve plan --ip 192.168.0.20
-docker compose run --rm atvleve restore --ip 192.168.0.20
-```
-
-- Os backups ficam na pasta `backups/` do projeto, no seu computador.
-- A chave do adb fica guardada num volume do Docker, então a TV não pede autorização de
-  novo a cada vez.
-- O painel só abre neste computador (`127.0.0.1`). Não publique a porta para a rede: ele
-  não tem senha e pode alterar a TV.
-- No Linux, se aparecer erro de permissão ao gravar o backup: com Docker "rootless",
-  rode com `ATVLEVE_USER=0:0 docker compose up` (no rootless isso é o seu próprio
-  usuário); com Docker normal, rode `sudo chown 1000:1000 backups`.
-- Para instalar um APK com `launcher --install`, o arquivo precisa estar numa pasta
-  visível no container, por exemplo `backups/`:
-  `docker compose run --rm atvleve launcher --ip 192.168.0.20 --install /dados/backups/app.apk`.
-
-Sem Docker, siga o passo a passo abaixo.
+| | [Opção A: Docker](#opção-a-com-docker) | [Opção B: instalação local](#opção-b-instalação-local) |
+|---|---|---|
+| Precisa instalar | Só o Docker | Python e adb |
+| Indicado para | Quem quer só usar | Quem vai mexer no código ou não tem Docker |
+| Comando | `docker compose run --rm atvleve ...` | `atvleve ...` |
 
 ---
 
-## Passo a passo
+## Opção A: com Docker
+
+Python, adb e o painel já vêm dentro da imagem. Você só precisa do
+[Docker](https://docs.docker.com/get-docker/) (no Windows e no macOS, o Docker Desktop).
+
+### Instalar e subir o painel
+
+```bash
+git clone https://github.com/SEU_USUARIO/atv-leve.git
+cd atv-leve
+docker compose up -d --build
+```
+
+Abra **http://localhost:8765** no navegador, digite o IP da TV e clique em **Analisar**.
+Na primeira conexão a TV pergunta se permite a depuração: marque "Sempre permitir" e
+confirme.
+
+### Linha de comando
+
+Todos os comandos do [Como usar](#como-usar) funcionam no Docker. É só trocar `atvleve`
+por `docker compose run --rm atvleve`:
+
+```bash
+docker compose run --rm atvleve doctor --ip 192.168.0.20
+docker compose run --rm atvleve plan   --ip 192.168.0.20
+docker compose run --rm atvleve apply  --ip 192.168.0.20
+```
+
+### Parar, voltar a usar e atualizar
+
+```bash
+docker compose down             # para o painel
+docker compose up -d            # sobe de novo
+git pull && docker compose up -d --build   # atualiza para a versão mais nova
+```
+
+### Onde ficam as coisas
+
+- **Backups**: na pasta `backups/` do projeto, no seu computador. Dentro do container
+  ela aparece como `/dados/backups` (use esse caminho em `restore --file`).
+- **Chave do adb**: num volume do Docker, então a TV não pede autorização de novo.
+  `docker compose down -v` apaga essa chave (a TV vai perguntar outra vez).
+- **Arquivos que você gera** (como o `profile-export`): grave em `/dados/backups` para
+  eles aparecerem na pasta `backups/`, por exemplo
+  `docker compose run --rm atvleve profile-export --ip 192.168.0.20 -o /dados/backups/perfil.yaml`.
+- **Painel**: só abre neste computador (`127.0.0.1`). Não publique a porta para a rede:
+  ele não tem senha e pode alterar a TV.
+
+### Problemas comuns no Docker
+
+- **`address already in use` na porta 8765**: já tem outro painel rodando (por exemplo
+  o da instalação local). Feche-o, ou mude a porta no `compose.yaml` para
+  `"127.0.0.1:8766:8765"` e abra http://localhost:8766.
+- **Erro de permissão ao gravar o backup (Linux)**: se o seu Docker é *rootless*
+  (o `docker info` mostra `rootless`), crie um arquivo `.env` na pasta do projeto com a
+  linha abaixo; no rootless o usuário 0 do container é o seu próprio usuário.
+
+  ```bash
+  echo "ATVLEVE_USER=0:0" >> .env
+  ```
+
+  Com o Docker normal, rode `sudo chown 1000:1000 backups`.
+- **Instalar um APK com `launcher --install`**: coloque o arquivo em `backups/` e use o
+  caminho de dentro do container:
+  `docker compose run --rm atvleve launcher --ip 192.168.0.20 --install /dados/backups/app.apk`.
+
+---
+
+## Opção B: instalação local
 
 ### 1. Instale o Python e o adb no computador
 
@@ -116,25 +163,31 @@ python -m venv .venv
 source .venv/bin/activate
 # Windows:
 .venv\Scripts\activate
-pip install -e .
+pip install -e ".[web]"
 ```
 
-> Instale com `pip install -e .` a partir da pasta clonada: assim o ATV Leve encontra os
+> Instale com `pip install -e` a partir da pasta clonada: assim o ATV Leve encontra os
 > perfis (`profiles/`) e guarda os backups em `backups/`, dentro da própria pasta.
+> O `[web]` instala o painel; sem ele você fica só com a linha de comando.
 
-### 3. Ative o ADB na TV
+### 3. Suba o painel (opcional)
 
-1. Na TV: **Configurações → Sistema** (ou *Preferências do dispositivo*) **→ Sobre**.
-2. Aperte **OK 7 vezes** em **Build do Android TV OS** até aparecer
-   "Você agora é um desenvolvedor".
-3. Volte e abra **Opções do desenvolvedor**.
-4. Ative **Depuração USB** e, se existir, **Depuração pela rede** / **Depuração por ADB**.
-5. Veja o **IP da TV** em Configurações → Rede e Internet → (sua rede Wi-Fi).
-   Exemplo: `192.168.0.20`.
+```bash
+atvleve web
+```
 
-O computador e a TV precisam estar **na mesma rede**.
+Abra http://127.0.0.1:8765. Por padrão o painel só abre neste computador;
+`--host 0.0.0.0` libera para a rede **sem senha**, e qualquer pessoa da rede poderia
+alterar a TV. Evite.
 
-### 4. Conecte
+---
+
+## Como usar
+
+Os exemplos usam `atvleve`. **No Docker**, escreva `docker compose run --rm atvleve` no
+lugar.
+
+### 1. Conecte
 
 ```bash
 atvleve doctor --ip 192.168.0.20
@@ -150,7 +203,7 @@ computador* e confirme.
 3. Depois `atvleve doctor --ip IP:PORTA` com a porta mostrada na tela principal de
    *Depuração sem fio* (ela é diferente da porta de pareamento).
 
-### 5. Veja como a TV está
+### 2. Veja como a TV está
 
 ```bash
 atvleve info --ip 192.168.0.20     # modelo, Android, RAM, espaço livre
@@ -158,26 +211,21 @@ atvleve top  --ip 192.168.0.20     # apps que mais usam memória
 atvleve scan --ip 192.168.0.20     # todos os apps e a classificação de cada um
 ```
 
-Dica: para não repetir o IP, defina a variável `ATVLEVE_IP=192.168.0.20`.
+Dica: para não repetir o IP, defina a variável `ATVLEVE_IP=192.168.0.20`. No Docker,
+coloque essa linha no arquivo `.env` da pasta do projeto.
 
 ### Prefere o navegador? Use o painel
 
-```bash
-pip install -e ".[web]"
-atvleve web
-```
-
-Abra http://127.0.0.1:8765, digite o IP e a porta da TV e clique em **Analisar**. O
-painel mostra RAM, armazenamento, os apps que mais pesam e o que dá para melhorar.
+Abra o painel em http://localhost:8765 (no Docker ele já está rodando; na instalação
+local, rode `atvleve web`), digite o IP e a porta da TV e clique em **Analisar**. O painel
+mostra RAM, armazenamento, os apps que mais pesam e o que dá para melhorar.
 
 Para aplicar, clique em **Revisar e aplicar**: os apps `seguro` vêm marcados, os
 `confirmar` vêm desmarcados (marque só o que você não usa), e você confirma antes. O
 painel faz o mesmo que o `atvleve apply`: backup antes, lotes pequenos com checagem da
 tela inicial e reversão automática. No final aparece o botão **Desfazer**.
-Por padrão o painel só abre neste computador; `--host 0.0.0.0` libera para a rede
-**sem senha**, e qualquer pessoa da rede poderia alterar a TV. Evite.
 
-### 6. Simule
+### 3. Simule
 
 ```bash
 atvleve plan --ip 192.168.0.20
@@ -185,7 +233,7 @@ atvleve plan --ip 192.168.0.20
 
 Nada é alterado. Você vê o que seria desativado e quais ajustes seriam feitos.
 
-### 7. Aplique
+### 4. Aplique
 
 ```bash
 atvleve apply --ip 192.168.0.20
@@ -195,7 +243,7 @@ O ATV Leve pergunta sobre cada app duvidoso, mostra o plano final, pede confirma
 grava o backup e executa. No final, **reinicie a TV** e teste: tela inicial, controle
 remoto, HDMI, Wi-Fi e os apps que você usa.
 
-### 7b. Opcional: troque a tela inicial
+### 4b. Opcional: troque a tela inicial
 
 Nas TVs com pouca RAM a tela inicial original costuma ser o app que mais pesa (na
 Aiwa testada, ~110 MB) e é de onde vêm os anúncios. Instale o **FLauncher** pela Play
@@ -212,7 +260,7 @@ passo. Se o Home sair do FLauncher, tudo volta sozinho. `atvleve restore` reativ
 original e devolve o padrão para ela. Mais detalhes em
 [docs/launcher-leve.md](docs/launcher-leve.md).
 
-### 8. Se algo der errado
+### 5. Se algo der errado
 
 ```bash
 atvleve restore --ip 192.168.0.20         # desfaz a última alteração
