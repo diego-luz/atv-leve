@@ -249,3 +249,14 @@ def test_theme_page_and_apply(post, tv, app):
     assert res.status_code == 400
     html = post("/aplicar-tema", {**TV, "color": "#000000", "custom": "#0B1F17"})
     assert "#0B1F17" in tv.files[THEME_FILE]
+
+
+def test_local_only_keeps_the_host_guard_on_any_address(monkeypatch):
+    # Docker: binds 0.0.0.0, but only answers to localhost names.
+    import atvleve.web.app as web
+    seen = {}
+    monkeypatch.setattr(web.Flask, "run", lambda self, **kw: seen.update(app=self, **kw))
+    web.run(host="0.0.0.0", allow_remote=False)
+    assert seen["host"] == "0.0.0.0" and seen["app"].config["ALLOW_REMOTE"] is False
+    web.run(host="0.0.0.0")
+    assert seen["app"].config["ALLOW_REMOTE"] is True

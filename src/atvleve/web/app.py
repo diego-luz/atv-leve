@@ -239,6 +239,10 @@ def create_app(runner_factory=AdbRunner, allow_remote: bool = False) -> Flask:
     return app
 
 
-def run(host: str = "127.0.0.1", port: int = 8765, debug: bool = False) -> None:
-    create_app(allow_remote=host not in LOCAL_HOSTS).run(host=host, port=port, debug=debug,
-                                                         threaded=True)
+def run(host: str = "127.0.0.1", port: int = 8765, debug: bool = False,
+        allow_remote: bool | None = None) -> None:
+    # allow_remote=False keeps the localhost-only guard while listening on another address
+    # (inside Docker the panel binds 0.0.0.0 but the browser reaches it as localhost).
+    if allow_remote is None:
+        allow_remote = host not in LOCAL_HOSTS
+    create_app(allow_remote=allow_remote).run(host=host, port=port, debug=debug, threaded=True)

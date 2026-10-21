@@ -1,0 +1,21 @@
+services:
+  atvleve:
+    build: .
+    image: atv-leve
+    # Docker "rootless" (comum no Linux sem sudo): use ATVLEVE_USER=0:0, que no rootless
+    # corresponde ao seu próprio usuário e permite gravar em ./backups.
+    user: "${ATVLEVE_USER:-1000:1000}"
+    ports:
+      # Só neste computador. Não troque por "8765:8765": o painel não tem senha e
+      # pode alterar a TV.
+      - "127.0.0.1:8765:8765"
+    volumes:
+      - ./backups:/dados/backups
+      - adb-chave:/home/atv/.android
+    environment:
+      - ATVLEVE_IP=${ATVLEVE_IP:-}
+    stdin_open: true
+    tty: true
+
+volumes:
+  adb-chave:

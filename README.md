@@ -49,6 +49,49 @@ com `atvleve theme`. Parada na tela inicial, a memória livre passou de ~238 MB 
 
 ---
 
+## Jeito mais fácil: com Docker
+
+Se você tem o [Docker](https://docs.docker.com/get-docker/) instalado, não precisa
+instalar Python nem adb: já vem tudo dentro da imagem.
+
+1. Ative o ADB na TV (veja o [passo 3](#3-ative-o-adb-na-tv) abaixo).
+2. Baixe o projeto e suba o painel:
+
+   ```bash
+   git clone https://github.com/SEU_USUARIO/atv-leve.git
+   cd atv-leve
+   docker compose up --build
+   ```
+
+3. Abra **http://localhost:8765** no navegador e digite o IP da TV. Na primeira vez a TV
+   pergunta se permite a depuração: marque "Sempre permitir" e confirme.
+
+Para parar, aperte Ctrl+C. Na próxima vez basta `docker compose up`.
+
+Prefere a linha de comando? Todos os comandos do guia funcionam assim:
+
+```bash
+docker compose run --rm atvleve doctor --ip 192.168.0.20
+docker compose run --rm atvleve plan --ip 192.168.0.20
+docker compose run --rm atvleve restore --ip 192.168.0.20
+```
+
+- Os backups ficam na pasta `backups/` do projeto, no seu computador.
+- A chave do adb fica guardada num volume do Docker, então a TV não pede autorização de
+  novo a cada vez.
+- O painel só abre neste computador (`127.0.0.1`). Não publique a porta para a rede: ele
+  não tem senha e pode alterar a TV.
+- No Linux, se aparecer erro de permissão ao gravar o backup: com Docker "rootless",
+  rode com `ATVLEVE_USER=0:0 docker compose up` (no rootless isso é o seu próprio
+  usuário); com Docker normal, rode `sudo chown 1000:1000 backups`.
+- Para instalar um APK com `launcher --install`, o arquivo precisa estar numa pasta
+  visível no container, por exemplo `backups/`:
+  `docker compose run --rm atvleve launcher --ip 192.168.0.20 --install /dados/backups/app.apk`.
+
+Sem Docker, siga o passo a passo abaixo.
+
+---
+
 ## Passo a passo
 
 ### 1. Instale o Python e o adb no computador

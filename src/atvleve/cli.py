@@ -627,12 +627,13 @@ def cmd_web(args) -> int:
         from .web.app import run
     except ImportError:
         raise UserError("O painel web precisa do Flask: pip install -e \".[web]\"") from None
-    if args.host not in ("127.0.0.1", "localhost"):
+    if args.host not in ("127.0.0.1", "localhost") and not args.local_only:
         console.print("[bold red]Atenção:[/bold red] o painel ficará acessível por outros "
                       "aparelhos da rede, sem senha, e ele pode alterar a TV (botão Aplicar).")
-    console.print(f"Abra no navegador: [bold]http://{args.host}:{args.port}[/bold]  "
+    shown = "localhost" if args.local_only else args.host
+    console.print(f"Abra no navegador: [bold]http://{shown}:{args.port}[/bold]  "
                   "(Ctrl+C para sair)")
-    run(host=args.host, port=args.port)
+    run(host=args.host, port=args.port, allow_remote=False if args.local_only else None)
     return 0
 
 
@@ -708,6 +709,9 @@ def build_parser() -> argparse.ArgumentParser:
     p = add("web", cmd_web, "abre o painel no navegador")
     p.add_argument("--host", default="127.0.0.1", help="endereço do painel (padrão 127.0.0.1)")
     p.add_argument("--port", type=int, default=8765, help="porta do painel (padrão 8765)")
+    p.add_argument("--local-only", action="store_true",
+                   help="só aceita acesso por localhost, mesmo escutando em outro endereço "
+                        "(usado no Docker)")
     return parser
 
 
