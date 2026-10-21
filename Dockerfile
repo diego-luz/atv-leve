@@ -20,8 +20,8 @@ COPY profiles ./profiles
 # Sem root. /dados guarda os backups; ~/.android guarda a chave adb, para a TV não
 # pedir autorização de novo a cada vez que o container é recriado.
 RUN useradd --create-home --uid 1000 atv \
-    && mkdir -p /dados /home/atv/.android \
-    && chown atv:atv /dados /home/atv/.android
+    && mkdir -p /dados/backups /home/atv/.android \
+    && chown -R atv:atv /dados /home/atv/.android
 USER atv
 
 ENV HOME=/home/atv \
