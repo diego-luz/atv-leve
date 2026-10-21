@@ -1,7 +1,7 @@
 # Fase 2: trocar a tela inicial
 
 Nas TVs com pouca RAM a tela inicial original (`com.google.android.tvlauncher` no
-Android TV) costuma ser o maior consumidor de memória: ~110 MB numa Aiwa de 913 MB. Ela
+Android TV) costuma ser o maior consumidor de memória: ~208 MB numa Aiwa de 913 MB. Ela
 também é a origem dos anúncios e recomendações.
 
 ## Como funciona hoje (`atvleve launcher`)

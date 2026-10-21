@@ -246,7 +246,7 @@ remoto, HDMI, Wi-Fi e os apps que você usa.
 ### 4b. Opcional: troque a tela inicial
 
 Nas TVs com pouca RAM a tela inicial original costuma ser o app que mais pesa (na
-Aiwa testada, ~110 MB) e é de onde vêm os anúncios. Instale o **FLauncher** pela Play
+Aiwa testada, ~208 MB) e é de onde vêm os anúncios. Instale o **FLauncher** pela Play
 Store da TV (se ele não aparecer, use o **Projectivy Launcher**), abra uma vez e rode:
 
 ```bash
