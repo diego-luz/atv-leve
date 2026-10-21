@@ -18,6 +18,21 @@ TCL, etc.) com 1 a 2 GB de RAM.
 
 ---
 
+## Como fica na TV
+
+Uma Aiwa (Android 14, 913 MB de RAM) depois de trocar a tela inicial pelo launcher leve
+do [Clean Your TV](https://github.com/Gathin23/cleanyourtv) e aplicar uma cor de fundo
+com `atvleve theme`. Parada na tela inicial, a memória livre passou de ~238 MB para
+~330 MB. Os apps que não vêm de fábrica foram borrados.
+
+| Tela inicial | Todos os apps |
+|---|---|
+| ![Tela inicial com Netflix, Prime Video e YouTube](docs/fotos/1-tela-inicial.jpg) | ![Grade com todos os apps instalados](docs/fotos/2-todos-os-apps.jpg) |
+| **Botão Entradas (HDMI, TV ao vivo)** | **Configurações rápidas** |
+| ![Menu de entradas aberto](docs/fotos/3-entradas.jpg) | ![Painel de configurações aberto](docs/fotos/4-configuracoes.jpg) |
+
+---
+
 ## ⚠️ Leia antes de usar
 
 - Você usa por sua conta e risco. O ATV Leve foi feito para ser cuidadoso, mas cada TV é
