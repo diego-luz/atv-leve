@@ -79,7 +79,7 @@ Python, adb e o painel já vêm dentro da imagem. Você só precisa do
 ### Instalar e subir o painel
 
 ```bash
-git clone https://github.com/SEU_USUARIO/atv-leve.git
+git clone https://github.com/diego-luz/atv-leve.git
 cd atv-leve
 docker compose up -d --build
 ```
@@ -156,7 +156,7 @@ git pull && docker compose up -d --build   # atualiza para a versão mais nova
 ### 2. Baixe e instale o ATV Leve
 
 ```bash
-git clone https://github.com/SEU_USUARIO/atv-leve.git
+git clone https://github.com/diego-luz/atv-leve.git
 cd atv-leve
 python -m venv .venv
 # Linux/macOS:
