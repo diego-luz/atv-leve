@@ -260,6 +260,28 @@ passo. Se o Home sair do FLauncher, tudo volta sozinho. `atvleve restore` reativ
 original e devolve o padrão para ela. Mais detalhes em
 [docs/launcher-leve.md](docs/launcher-leve.md).
 
+### 4c. Opcional: mude a cor de fundo
+
+Com o launcher do [Clean Your TV](https://github.com/Gathin23/cleanyourtv)
+(`com.gathin.tvhome`) como tela inicial, dá para trocar a cor de fundo. No painel, clique
+em **Escolher a cor** no relatório:
+
+1. Escolha uma das 8 cores prontas (todas escuras, para o texto branco do launcher
+   continuar legível) ou qualquer outra em **Outra cor**. A prévia mostra como fica.
+2. Clique em **Aplicar na TV**. A tela inicial reinicia com a cor nova e o tema anterior
+   vai para o backup; o **Desfazer** volta a cor de antes.
+
+| Escolhendo a cor | Depois de aplicar |
+|---|---|
+| ![Painel com a cor Roxo escolhida e a prévia da tela inicial](docs/prints/2-tema-escolhendo-roxo.jpg) | ![Painel confirmando a cor nova na TV](docs/prints/3-tema-aplicado.jpg) |
+
+Pela linha de comando:
+
+```bash
+atvleve theme --ip 192.168.0.20                    # mostra a cor atual e as opções
+atvleve theme --ip 192.168.0.20 --color '#170A2B'  # aplica
+```
+
 ### 5. Se algo der errado
 
 ```bash
@@ -303,6 +325,7 @@ As regras de proteção comuns a todas as TVs estão em
 | `atvleve apply` | Backup automático + execução com confirmação e checagem de segurança |
 | `atvleve tune` | Só as animações (`--scale 0`, `0.5` ou `1`; padrão `0.5`) |
 | `atvleve launcher` | Mostra a tela inicial; `--set PACOTE` troca por um launcher leve |
+| `atvleve theme` | Cor de fundo do launcher leve (`--color #RRGGBB`) |
 | `atvleve restore` | Desfaz a última alteração (`--all`, `--file`, `--list`) |
 | `atvleve profile-export` | Gera um perfil-modelo da sua TV para contribuir |
 | `atvleve web` | Abre o painel no navegador (analisar, aplicar e desfazer) |
