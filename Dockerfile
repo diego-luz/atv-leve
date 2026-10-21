@@ -3,6 +3,10 @@
 #   docker compose run --rm atvleve doctor --ip 192.168.0.20
 FROM python:3.12-slim-bookworm
 
+LABEL org.opencontainers.image.source="https://github.com/diego-luz/atv-leve" \
+      org.opencontainers.image.description="ATV Leve: deixa Android TV / Google TV mais leve via ADB, sem root" \
+      org.opencontainers.image.licenses="MIT"
+
 RUN apt-get update \
     && apt-get install -y --no-install-recommends adb \
     && rm -rf /var/lib/apt/lists/*
