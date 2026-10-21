@@ -93,7 +93,7 @@ Python, adb e o painel já vêm dentro da imagem. Você só precisa do
 ### Jeito mais rápido: imagem pronta, sem baixar o projeto
 
 A imagem está publicada em [ghcr.io/diego-luz/atv-leve](https://github.com/diego-luz/atv-leve/pkgs/container/atv-leve)
-(tags `latest` e a versão, como `0.1.0`).
+(tags `latest` e a versão, como `0.1.1`).
 
 ```bash
 docker run -d --name atvleve -p 127.0.0.1:8765:8765 \

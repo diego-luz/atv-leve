@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "atv-leve"
-version = "0.1.0"
+version = "0.1.1"
 description = "Deixa TVs Android TV / Google TV com poucos recursos mais leves, via ADB, sem root."
 readme = "README.md"
 license = { text = "MIT" }
